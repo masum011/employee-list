@@ -1,24 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
-import { fetchEmployee, updateExistingEmployee } from '../features/employees/employeeSlice';
+import { fetchEmployee, fetchEmployees, updateExistingEmployee } from '../features/employees/employeeSlice';
 import { TextField, Button, Container, Typography } from '@mui/material';
 
 const EditEmployee = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const employee = useSelector((state) =>
-    state?.employees?.selectedEmployee?.data
-);
-  console.log(employee,'empDetails')
+  const employee = useSelector((state) =>state?.employees?.selectedEmployee?.data);
+  console.log(id,'empDetails')
   const [fullName, setFullName] = useState(employee ? employee.fullName : '');
   const [age, setAge] = useState(employee ? employee.age : '');
   const [email, setEmail] = useState(employee ? employee.email : '');
   const [phone, setPhone] = useState(employee ? employee.phone : '');
-  const [salary, setSalary] = useState(employee ? employee.salary : '');
+  const [salary, setSalary] = useState(employee ? employee.salary : '');  
   const [image, setImage] = useState(employee ? employee.image : '');
-
+  const [btnLoading,setBtnLoading]=useState(false)
+  console.log(btnLoading)
   useEffect(() => {
     if (!employee || employee._id !== id) {
       dispatch(fetchEmployee(id));  // Fetch the employee if not already loaded
@@ -33,9 +32,11 @@ const EditEmployee = () => {
     }
   }, [dispatch, id, employee]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    dispatch(updateExistingEmployee({ id: parseInt(id), employeeData: { fullName, age, email, phone, salary,image } }));
+    setBtnLoading(true)
+   await dispatch(updateExistingEmployee({ id, employeeData: { fullName, age, email, phone, salary,image } })).unwrap();
+    dispatch(fetchEmployees());
     navigate('/');
   };
 
@@ -87,7 +88,7 @@ const EditEmployee = () => {
           margin="normal"
         />
         <Button variant="contained" color="primary" type="submit">
-          Update
+          {btnLoading? 'loading...' : 'Update'}
         </Button>
       </form>
     </Container>
