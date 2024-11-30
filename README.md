@@ -20,7 +20,7 @@ This is a simple **Employee Management System** built using React, Redux, and Ma
 - **Styling:** MUI, Emotion (for styled components)
 
 ## Deploy URL
-     link: 
+     link: https://employee-fortmindz.netlify.app/
      
 ## Installation and Setup
 
